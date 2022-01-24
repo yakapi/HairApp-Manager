@@ -62,7 +62,28 @@ class PlanningManagerView extends React.Component {
       this.setState({"ressource_selected": ressource_selected})
       this.setState({"ressource_employe": data})
     })
-
+    this.getEventWeek()
+  }
+  getEventWeek = (e) => {
+    console.log("HELLLO FUCKING WORLDDDDDDDDDDDDDDDDDD");
+    let obj_date = new Date()
+    // obj_date.getDate()
+    let enter_week_calendar
+    let finish_week_calendar
+    console.log(obj_date.getDate());
+    if (obj_date.getDay() != 0) {
+      let ent_date = obj_date.getDay() - 1
+      enter_week_calendar = obj_date.getDate() - ent_date
+      finish_week_calendar = enter_week_calendar + 6
+    }else {
+      let ent_date = obj_date.getDay() - 6
+      enter_week_calendar = obj_date.getDate() - ent_date
+      finish_week_calendar = enter_week_calendar + 6
+    }
+    let date_week_enter = obj_date.getFullYear()+"-"+obj_date.getMonth()+"-"+enter_week_calendar
+    let date_week_finish = obj_date.getFullYear()+"-"+obj_date.getMonth()+"-"+finish_week_calendar
+    console.log(date_week_enter);
+    console.log(date_week_finish);
   }
   selectRessource = (e) => {
     e.target.classList.toggle('selected_ressource')
@@ -131,7 +152,8 @@ class PlanningManagerView extends React.Component {
             "type_id": array_type.id,
             "type_border": array_type.color,
             "start": day_start,
-            "end": break_start
+            "end": break_start,
+            "date": e.dateStr
           },{
             "saloon_id": this.props.saloonId,
             "name_employe": array_employe[i].name,
@@ -142,7 +164,8 @@ class PlanningManagerView extends React.Component {
             "type_id": array_type.id,
             "type_border": array_type.color,
             "start": break_end,
-            "end": day_end
+            "end": day_end,
+            "date": e.dateStr
           }]
           for (var u = 0; u < array_all_day.length; u++) {
             let data_to_send = {
@@ -156,7 +179,8 @@ class PlanningManagerView extends React.Component {
               "type_id": array_all_day[u].type_id,
               "type_border": array_all_day[u].type_border,
               "start": array_all_day[u].start,
-              "end": array_all_day[u].end
+              "end": array_all_day[u].end,
+              "date": array_all_day[u].date
             }
             fetch('http://api-coiffure.victorbarlier.fr/events.php',{
               method: 'post',

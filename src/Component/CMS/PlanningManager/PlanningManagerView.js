@@ -11,12 +11,12 @@ class PlanningManagerView extends React.Component {
     this.state = {
       bh:  [
             {
-              daysOfWeek: [ 2, 3, 4, 5 ], // Tuesday, Wednesday, Thursday, Friday
+              daysOfWeek: [ 1, 2, 3, 4, 5 ], // Lundi... ,
               startTime: '08:00', // 8am
               endTime: '18:00' // 6pm
             },
             {
-              daysOfWeek: [6, 0], // Thursday, Friday
+              daysOfWeek: [6, 0], // Samedi, Dimanche
               startTime: '13:00', // 10am
               endTime: '17:00' // 4pm
             }
@@ -101,21 +101,78 @@ class PlanningManagerView extends React.Component {
       if (day_array[0] != "Sat" || day_array[0] != "Sun") {
         let array_type
         if (this.state.type_event == "service") {
-          // array_type
+          array_type = {
+            "name": "service",
+            "id": 0,
+            "color": "lightgrey"
+          }
+        }else if (this.state.type_event == "vacance") {
+          array_type = {
+            "name": "vacance",
+            "id": 1,
+            "color": "green"
+          }
+        }else if (this.state.type_event == "maladie") {
+          array_type = {
+            "name": "maladie",
+            "id": 2,
+            "color": "red"
+          }
         }
-        let array_all_day = [{
-          "type": "service",
-          "type_id": 0,
-          "type_border": "lightgrey",
-          "start": day_start,
-          "end": break_start
-        },{
-          "type": "service",
-          "type_id": 0,
-          "type_border": "lightgrey",
-          "start": break_end,
-          "end": day_end
-        }]
+        let array_employe = this.state.ressource_employe
+        for (var i = 0; i < array_employe.length; i++) {
+          let array_all_day = [{
+            "saloon_id": this.props.saloonId,
+            "name_employe": array_employe[i].name,
+            "nickname_employe": array_employe[i].nickname,
+            "employe_id": array_employe[i].id,
+            "employe_color": array_employe[i].color,
+            "type": array_type.name,
+            "type_id": array_type.id,
+            "type_border": array_type.color,
+            "start": day_start,
+            "end": break_start
+          },{
+            "saloon_id": this.props.saloonId,
+            "name_employe": array_employe[i].name,
+            "nickname_employe": array_employe[i].nickname,
+            "employe_id": array_employe[i].id,
+            "employe_color": array_employe[i].color,
+            "type": array_type.name,
+            "type_id": array_type.id,
+            "type_border": array_type.color,
+            "start": break_end,
+            "end": day_end
+          }]
+          for (var u = 0; u < array_all_day.length; u++) {
+            let data_to_send = {
+              "call": "add",
+              "saloon_id": array_all_day[u].saloon_id,
+              "name_employe": array_all_day[u].name_employe,
+              "nickname_employe": array_all_day[u].nickname,
+              "employe_id": array_all_day[u].employe_id,
+              "employe_color": array_all_day[u].employe_color,
+              "type": array_all_day[u].type,
+              "type_id": array_all_day[u].type_id,
+              "type_border": array_all_day[u].type_border,
+              "start": array_all_day[u].start,
+              "end": array_all_day[u].end
+            }
+            fetch('http://api-coiffure.victorbarlier.fr/events.php',{
+              method: 'post',
+              credentials: 'include',
+              headers:{
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+              },
+              body: Object.entries(data_to_send).map(([k,v])=>{return k+'='+v}).join('&')
+            }).then(response => response.json()).then(data => {
+              console.log(data);
+            })
+          }
+        }
+      }else {
+        console.log('ni samedi ni dimanche');
       }
     }else {
       console.log("clique sur un horaire");

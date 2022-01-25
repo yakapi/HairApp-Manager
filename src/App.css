@@ -327,7 +327,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#feffff', end
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
-	z-index: 1000;
+	/* z-index: 1000; */
 }
 .AdminSaloon{
 	display: flex;
@@ -344,6 +344,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#feffff', end
 .AdminInputContainer{
 	position: relative;
 	margin-top: 10px;
+	z-index: 1000;
 }
 .AdminInputSheet{
 	background: rgb(0,0,0);
@@ -382,6 +383,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#feffff', end
 	border: 1px solid #282548;
 	height: 40px;
 	width: 60px;
+	z-index: 1000;
+	position: relative;
 	cursor: pointer;
 	display: flex;
 	justify-content: center;
@@ -468,6 +471,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#feffff', end
 .SettingBoard{
 	position: absolute;
 	top: 60px;
+	z-index: 1000;
 	right: 12px;
 	padding: 10px;
 	border-radius: 7px;

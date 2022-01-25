@@ -27,8 +27,9 @@ class PlanningManagerView extends React.Component {
       pointer: [
         {
           title: 'All Day Event',
-          start: '2021-12-13T09:00:00+01:00',
-          end: '2021-12-13T10:00:00+01:00'
+          start: '2022-01-25T09:00:00+01:00',
+          end: '2022-01-25T10:00:00+01:00',
+          color: 'red'
         },
         {
           title: 'Long Event',
@@ -70,7 +71,13 @@ class PlanningManagerView extends React.Component {
     // obj_date.getDate()
     let enter_week_calendar
     let finish_week_calendar
-    console.log(obj_date.getDate());
+    let month_calendar
+    let month = obj_date.getMonth() + 1
+    if (obj_date.getMonth() < 10) {
+      month_calendar = "0" + month
+    }else {
+      month_calendar = month
+    }
     if (obj_date.getDay() != 0) {
       let ent_date = obj_date.getDay() - 1
       enter_week_calendar = obj_date.getDate() - ent_date
@@ -80,8 +87,42 @@ class PlanningManagerView extends React.Component {
       enter_week_calendar = obj_date.getDate() - ent_date
       finish_week_calendar = enter_week_calendar + 6
     }
-    let date_week_enter = obj_date.getFullYear()+"-"+obj_date.getMonth()+"-"+enter_week_calendar
-    let date_week_finish = obj_date.getFullYear()+"-"+obj_date.getMonth()+"-"+finish_week_calendar
+    let date_week_enter = obj_date.getFullYear()+"-"+month_calendar+"-"+enter_week_calendar
+    let date_week_finish = obj_date.getFullYear()+"-"+month_calendar+"-"+finish_week_calendar
+    let data_to_send = {
+      "call": "get_event_week",
+      "start": date_week_enter,
+      "end": date_week_finish,
+      "saloonId": this.props.saloonId
+    }
+    fetch("http://api-coiffure.victorbarlier.fr/events.php",{
+      method: 'post',
+      credentials: 'include',
+      headers:{
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+      },
+      body: Object.entries(data_to_send).map(([k,v])=>{return k+'='+v}).join('&')
+    }).then(response => response.json()).then(data => {
+      console.log(data);
+      let pointer_array = []
+      for (var i = 0; i < data.length; i++) {
+        console.log(data[i]);
+        let split_start = data[i].events_start.split(" ");
+        let split_end = data[i].events_end.split(" ");
+        let start_evt = split_start[0]+"+"+split_start[1]
+        let end_evt = split_end[0]+"+"+split_end[1]
+        let pointer_row = {
+          "title": data[i].name_employe,
+          "start": start_evt,
+          "end": end_evt,
+          "color": data[i].employe_color
+        }
+        pointer_array.push(pointer_row)
+      }
+      this.setState({"pointer": pointer_array})
+      console.log(this.state.pointer);
+    })
     console.log(date_week_enter);
     console.log(date_week_finish);
   }
